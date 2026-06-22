@@ -1,0 +1,21 @@
+Success (2xx)
+    200 OK: The standard response for a successful HTTP request.
+    201 Created: The request succeeded and a new resource was created (common for POST/PUT requests).
+    204 No Content: The request was successful, but there is no body content to return (common for successful DELETE operations).
+
+Redirection (3xx)
+    301 Moved Permanently: The URL has been permanently replaced by a new one. Vital for SEO.
+    302 Found (Temporary Redirect): The page is temporarily located at a different URL.
+    304 Not Modified: Tells the browser to load the page from the local cache because the content has not changed since the last visit.
+    
+Client Errors (4xx)
+    400 Bad Request: The server cannot process the request due to malformed syntax or invalid data.
+    401 Unauthorized: The client is missing valid authentication credentials for the requested resource.
+    403 Forbidden: The server understands who you are, but you do not have permission to access the resource.
+    404 Not Found: The requested URL does not exist on the server.
+    
+Server Errors (5xx)
+    500 Internal Server Error: A generic error indicating the server encountered an unexpected condition it couldn't fulfill.
+    502 Bad Gateway: The server, while acting as a gateway or proxy, received an invalid response from the upstream server.
+    503 Service Unavailable: The server is currently unavailable (e.g., overloaded or down for maintenance).
+    504 Gateway Timeout: The server acting as a gateway didn't receive a timely response from an upstream server.

@@ -13,6 +13,8 @@ import {
   deleteTask,
 } from "./Routes/taskFunctions.js";
 
+import { signUpUser, logInUser } from "./Routes/userFunctions.js";
+
 // 1. Initialize dotenv FIRST
 dotenv.config();
 
@@ -41,6 +43,9 @@ app.get("/api/getAllTask", getAllTask);
 app.post("/api/addTask", setTask);
 app.put("/api/update/:id", updateTask);
 app.delete("/api/delete/:id", deleteTask);
+
+app.post("/api/signup", signUpUser);
+app.post("/api/login", logInUser);
 
 // Start the server at the given port stored in the env file
 const port = process.env.PORT || 3000;
