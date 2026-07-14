@@ -66,7 +66,8 @@ async function comparePassword(pass, hash) {
 }
 
 async function JWT_Producer(userId) {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  const secret = process.env.JWT_SECRET || "default_development_secret_key_123456789";
+  return jwt.sign({ id: userId }, secret, { expiresIn: "7d" });
 }
 // ------------------------------------------- Routes -------------------------------------------
 

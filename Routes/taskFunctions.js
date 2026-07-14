@@ -28,7 +28,8 @@ async function validateJwt(token, res) {
       cleanToken = token.slice(7);
     }
 
-    const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || "default_development_secret_key_123456789";
+    const decoded = jwt.verify(cleanToken, secret);
     
     const exist = await user.findById(decoded.id);
     if (exist) {
