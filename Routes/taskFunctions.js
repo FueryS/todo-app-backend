@@ -1,5 +1,6 @@
 import user from "../Schemas/userSchema.js";
 import task from "../Schemas/taskSchema.js";
+import jwt from "jsonwebtoken";
 
 import mongoose from "mongoose";
 const { ObjectId } = mongoose.Types;
@@ -11,43 +12,41 @@ CHECKS IF THE JWT IS VALID: returns:
     -  JWT is invalid: [false]
     -  JWT is valid:   [true,_id]
 */
-// (for now it just validates the _id jwt will be implemented in future)
-
-async function validateJwt(jwt, res) {
+async function validateJwt(token, res) {
   // Ensure JWT has been sent
-  if (!jwt) {
-    res.status(400).json({
-      error: "Missing JWT",
-      message: "Please enter a valid JWT token",
+  if (!token) {
+    res.status(401).json({
+      error: "Missing Token",
+      message: "Please login to access this resource",
     });
     return [false];
   }
 
-  // Check JWT format
-  if (!ObjectId.isValid(jwt)) {
-    res.status(400).json({
-      error: "Invalid JWT",
-      message: "Please enter a valid JWT token",
-    });
+  try {
+    let cleanToken = token;
+    if (token.startsWith("Bearer ")) {
+      cleanToken = token.slice(7);
+    }
 
+    const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET);
+    
+    const exist = await user.findById(decoded.id);
+    if (exist) {
+      return [true, decoded.id];
+    } else {
+      res.status(401).json({
+        error: "Invalid Token",
+        message: "User account does not exist or has been deleted",
+      });
+      return [false];
+    }
+  } catch (error) {
+    res.status(401).json({
+      error: "Invalid Token",
+      message: "Please login again. Your session might be invalid or expired.",
+    });
     return [false];
   }
-
-  // Chaeck JWT is valid
-  const exist = await user.findOne({
-    _id: new ObjectId(jwt),
-  });
-  if (exist) return [true, jwt];
-  else {
-    res.status(400).json({
-      error: "Missing JWT",
-      message: "Please enter a valid JWT token",
-    });
-    return [false];
-  }
-
-  // Default return is false
-  return [false];
 }
 
 // Date sanitization

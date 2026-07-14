@@ -1,5 +1,6 @@
 import user from "../Schemas/userSchema.js"; // Please never forget the extention I spent a while realising that
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // ------------------------------------------- Helper Functions -------------------------------------------
 
@@ -48,7 +49,7 @@ function checkStrength(str) {
 
 // Encrypt the Password :: returns hashed password
 async function haspassword(str) {
-  const saltRound = 1;
+  const saltRound = parseInt(process.env.SALT_ROUNDS) || 10;
   return await bcrypt.hash(str, saltRound);
 }
 
@@ -64,8 +65,8 @@ async function comparePassword(pass, hash) {
   }
 }
 
-async function JWT_Producer(params) {
-  return params;
+async function JWT_Producer(userId) {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 }
 // ------------------------------------------- Routes -------------------------------------------
 
@@ -164,8 +165,8 @@ export async function logInUser(req, res) {
     }
     // 4. Send the user _id back to the page (later use JWT)
 
-    const jwt = await JWT_Producer(exist._id); // The fucntion is just a place holder right now
-    return res.status(200).json({ message: "Login Success", value: jwt });
+    const token = await JWT_Producer(exist._id);
+    return res.status(200).json({ message: "Login Success", value: token, userName: exist.UserName });
   } catch (e) {
     console.log("LoginError: ", e);
     res.status(400).json({

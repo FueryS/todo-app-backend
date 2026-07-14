@@ -1,6 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./ConnectDatabase.js";
+import cors from "cors";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 
 //Schemas
 import testing from "./Schemas/testingschema.js";
@@ -22,6 +25,23 @@ dotenv.config();
 connectDB();
 
 const app = express();
+
+// Security Middlewares
+app.use(helmet());
+app.use(cors());
+
+// Rate Limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per window
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    error: "Too many requests",
+    message: "Too many requests from this IP, please try again after 15 minutes."
+  }
+});
+app.use("/api", limiter);
 
 // I must use this "middle ware" when ever I am dealing with the json files
 app.use(express.json());
